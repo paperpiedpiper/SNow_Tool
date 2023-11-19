@@ -1,0 +1,33 @@
+html, body, div, span {
+    margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+h2 {
+    text-align: center;
+}
+
+body {
+    width: 100px;
+    height: 180px;
+    border-style: dashed;
+    padding: 5px;
+    border-width: 1px;
+    margin: 2px;
+}
+
+.bodyWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+    width: auto;
+}
+
+.buttonHr {
+    width: 15px;
+}
