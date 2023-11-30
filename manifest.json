@@ -1,31 +1,78 @@
 {
-    "manifest_version": 3,
-    "name": "SNow Tool",
-    "version": "1.2",
-    "permissions": ["activeTab", "tabs", "notifications"],
-    "background": {
-      "service_worker": "service-worker.js"
+  "manifest_version": 3,
+  "name": "SNow Tool - autofeature",
+  "version": "2.0",
+  "permissions": ["activeTab", "tabs", "notifications"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gaia.service-now.com/*"],
+      "js": ["wakeLock.js"],
+      "run_at": "document_end"
     },
-    "content_scripts": [
-      {
-        "matches": ["https://gaia.service-now.com/*"],
-        "js": ["wakeLock.js"],
-        "run_at": "document_end"
-      },
-      {
-        "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/interaction_list.do*"],
-        "js": ["interactionFilter.js"],
-        "all_frames": true,
-        "run_at": "document_end"
-      }
-    ],
-    "action": {
-        "default_popup": "popup.html"
-      },
-    "icons": {
-      "16": "images/icon16.png",
-      "32": "images/icon32.png",
-      "48": "images/icon48.png",
-      "128": "images/icon128.png"
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/interaction_list.do*", "https://gaia.service-now.com/interaction_list.do*"],
+      "js": ["interactionList.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/interaction.do*", "https://gaia.service-now.com/interaction.do*"],
+      "js": ["interaction.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/catalog_home.do*", "https://gaia.service-now.com/catalog_home.do*", "https://gaia.service-now.com/now/nav/ui/classic/params/target/catalogs_home.do*", "https://gaia.service-now.com/catalogs_home.do*"],
+      "js": ["scCatalogHome.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/com.glideapp.servicecatalog_category_view.do*", "https://gaia.service-now.com/com.glideapp.servicecatalog_category_view.do*"],
+      "js": ["scAll.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/com.glideapp.servicecatalog_cat_item_view.do*", "https://gaia.service-now.com/com.glideapp.servicecatalog_cat_item_view.do*"],
+      "js": ["scGenericRequest.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/com.glideapp.servicecatalog_checkout_view_v2.do*", "https://gaia.service-now.com/com.glideapp.servicecatalog_checkout_view_v2.do*"],
+      "js": ["scReqCreated.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/sc_request.do*", "https://gaia.service-now.com/sc_request.do*"],
+      "js": ["request.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/sc_req_item.do*", "https://gaia.service-now.com/sc_req_item.do*"],
+      "js": ["requestItem.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://gaia.service-now.com/now/nav/ui/classic/params/target/sc_task.do*", "https://gaia.service-now.com/sc_task.do*"],
+      "js": ["scTask.js"],
+      "all_frames": true,
+      "run_at": "document_end"
     }
+  ],
+  "action": {
+      "default_popup": "popup.html"
+    },
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  }
 }

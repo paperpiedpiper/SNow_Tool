@@ -16,14 +16,14 @@ function checkAndRequestWakeLock() {
                     checkAndRequestWakeLock();
                 } else {
                     releaseWakeLock();
-                }
+                };
             });
         })
         .catch(e => {
             retryRequest();
         });
-    }
-}
+    };
+};
 
 function releaseWakeLock() {
     if (wakeLockInstance !== null) {
@@ -36,14 +36,14 @@ function releaseWakeLock() {
             })
             .catch(e => {
             });
-    }
-}
+    };
+};
 
 function retryRequest() {
     clearTimeout(retry_timeoutHandle);
     retry_timeoutHandle = setTimeout(() => {
         checkAndRequestWakeLock();
     }, 2500);
-}
+};
 
 checkAndRequestWakeLock();
