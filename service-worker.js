@@ -22,11 +22,11 @@ function createNotification() {
     buttons: [{
       title: "Snooze for 10 minutes",
       iconUrl: "images/snooze1.png",
-    },
-  {
-    title: "Snooze for 5 minutes",
-    iconUrl: "images/snooze2.png"
-  }]
+      },
+      {
+      title: "Snooze for 5 minutes",
+      iconUrl: "images/snooze2.png"
+    }]
   };
   chrome.notifications.create("unassignedAlert", options);
 
@@ -43,5 +43,5 @@ function createNotification() {
 
   setTimeout(function(){
     chrome.notifications.clear("unassignedAlert");
-  }, 7*1000);
+  }, 7 * 1000);
 };
