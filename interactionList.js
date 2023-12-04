@@ -5,19 +5,18 @@ let isUrgent = false, isSnoozeOn = false, unsnooze_timeoutHandle;
 ////////////////////////// LOGIC
 //////////////////////////////////////////////
 function clickRefreshList() {
-    let hamburgerMenu = document.querySelector('button#interaction_control_button.btn.btn-default.icon-menu.navbar-btn');
-	let menuChildItems = document.querySelector('div#context_list_titleinteraction.context_menu')?.childNodes;
-    
+    const hamburgerMenu = document.querySelector('button#interaction_control_button.btn.btn-default.icon-menu.navbar-btn');
     hamburgerMenu?.click();
-	menuChildItems?.forEach(e => {if (e.outerText == "Refresh List") e.click()});
+	const menuChildItems = document.querySelector('div#context_list_titleinteraction.context_menu')?.childNodes;
+    menuChildItems?.forEach(e => {if (e.outerText == "Refresh List") e.click()});
 
 	console.log("-----REFRESHED LIST-----");
 };
 
 function checkInteractionsQueue() {
     if (!isSnoozeOn) {
-        const ticketTable = document.querySelector("tbody.list2_body");
-        if (ticketTable?.childNodes?.length != 0) {
+        const ticketTableCount = document.querySelector("tbody.list2_body")?.childElementCount;
+        if (ticketTableCount != 0) {
             chrome.runtime.sendMessage({ message: "ticketAlert" });
         };
 	};
@@ -26,7 +25,7 @@ function checkInteractionsQueue() {
 };
 
 function isPageInteractionList() {
-	if (document.querySelector("head > title").innerHTML.includes('Interactions')) {
+	if (document.querySelector("head > title").innerHTML.includes('Interactions') && document.querySelector("#interaction_breadcrumb").childElementCount > 1) {
 		return true;
     };
 	return false;
