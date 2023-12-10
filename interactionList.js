@@ -1,6 +1,9 @@
 "use strict";
 
-let isUrgent = false, isSnoozeOn = false, unsnooze_timeoutHandle;
+let unsnooze_timeoutHandle;
+if (!sessionStorage.getItem('isSnoozeOn')) {
+    sessionStorage.setItem('isSnoozeOn', 'false');
+};
 
 ////////////////////////// LOGIC
 //////////////////////////////////////////////
@@ -14,7 +17,7 @@ function clickRefreshList() {
 };
 
 function checkInteractionsQueue() {
-    if (!isSnoozeOn) {
+    if (sessionStorage.getItem('isSnoozeOn') == 'false') {
         const ticketTableCount = document.querySelector("tbody.list2_body")?.childElementCount;
         if (ticketTableCount != 0) {
             chrome.runtime.sendMessage({ message: "ticketAlert" });
@@ -33,16 +36,16 @@ function isPageInteractionList() {
 
 //--//
 function setSnoozeMin(time) {
-    isSnoozeOn = true;
+    sessionStorage.setItem('isSnoozeOn', 'true');
     clearTimeout(unsnooze_timeoutHandle);
     unsnooze_timeoutHandle = setTimeout(() => {
-      isSnoozeOn = false
+        sessionStorage.setItem('isSnoozeOn', 'false');
     }, time * 60000);
     console.log(`Snoozed for ${time} minutes`);
 };
 
 function unsnoozeAlert() {
-    isSnoozeOn = false;
+    sessionStorage.setItem('isSnoozeOn', 'false');
 };
 
 //--//
@@ -71,7 +74,7 @@ function timeArrayScraper(tArr) {
 ////////////////////////// LISTENERS
 //////////////////////////////////////////////
 window.addEventListener('click', () => {
-    if (isPageInteractionList() && !isSnoozeOn) 
+    if (isPageInteractionList() && sessionStorage.getItem('isSnoozeOn') == 'false') 
         setSnoozeMin(1.5)
 });
 

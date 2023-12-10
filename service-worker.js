@@ -82,6 +82,6 @@ function createNotification(notificationType) {
         }, 7 * 1000);
       });
       break;
-    }
+    };
   };
 };

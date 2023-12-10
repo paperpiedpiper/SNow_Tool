@@ -1,23 +1,19 @@
 "use strict";
 //==================================================
-function returnElement(element) {
-  return element;
-};
-
 function recursiveAnchor_Wrap(originalFx, element) {
   let debounceTime = 100;
-
+  function returnElement(element) {
+    return element;
+  };
+  
   function checkInner() {
-
     if (!returnElement(element)) {
       debounceTime += 10;
       setTimeout(checkInner, debounceTime);
       return;
     };
-
     originalFx(returnElement(element));
   };
-
   return checkInner;
 };
 //==================================================

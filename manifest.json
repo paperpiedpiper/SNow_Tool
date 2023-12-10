@@ -1,84 +1,84 @@
 {
-  "manifest_version": 3,
-  "name": "SNow Tool",
-  "version": "2.3",
-  "permissions": ["activeTab", "tabs", "notifications"],
-  "background": {
-    "service_worker": "service-worker.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://wwe-emea.stefanini.com/ui/ad/v1/index.html*"],
-      "js": ["WWEpage.js"],
-      "run_at": "document_idle"
+    "manifest_version": 3,
+    "name": "SNow Tool",
+    "version": "2.33",
+    "permissions": ["activeTab", "tabs", "notifications"],
+    "background": {
+      "service_worker": "service-worker.js"
     },
-    {
-      "matches": ["https://gaia.service-now.com/*"],
-      "js": ["wakeLock.js"],
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/interaction_list.do*"],
-      "js": ["interactionList.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/interaction.do*"],
-      "js": ["interaction.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/catalog_home.do*", "https://gaia.service-now.com/catalogs_home.do*"],
-      "js": ["scCatalogHome.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_category_view.do*"],
-      "js": ["scAll.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_cat_item_view.do*"],
-      "js": ["scGenericRequest.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_checkout_view_v2.do*"],
-      "js": ["scReqCreated.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/sc_request.do*"],
-      "js": ["request.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/sc_req_item.do*"],
-      "js": ["requestItem.js"],
-      "all_frames": true,
-      "run_at": "document_end"
-    },
-    {
-      "matches": ["https://gaia.service-now.com/sc_task.do*"],
-      "js": ["scTask.js"],
-      "all_frames": true,
-      "run_at": "document_end"
+    "content_scripts": [
+      {
+        "matches": ["https://wwe-emea.stefanini.com/ui/ad/v1/index.html*"],
+        "js": ["WWEpage.js"],
+        "run_at": "document_idle"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/*"],
+        "js": ["wakeLock.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/interaction_list.do*"],
+        "js": ["interactionList.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/interaction.do*"],
+        "js": ["interaction.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/catalog_home.do*", "https://gaia.service-now.com/catalogs_home.do*"],
+        "js": ["scCatalogHome.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_category_view.do*"],
+        "js": ["scAll.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_cat_item_view.do*"],
+        "js": ["scGenericRequest.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/com.glideapp.servicecatalog_checkout_view_v2.do*"],
+        "js": ["scReqCreated.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/sc_request.do*"],
+        "js": ["request.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/sc_req_item.do*"],
+        "js": ["requestItem.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://gaia.service-now.com/sc_task.do*"],
+        "js": ["scTask.js"],
+        "all_frames": true,
+        "run_at": "document_end"
+      }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+      },
+    "icons": {
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
     }
-  ],
-  "action": {
-      "default_popup": "popup.html"
-    },
-  "icons": {
-    "16": "images/icon16.png",
-    "32": "images/icon32.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
-  }
 }
