@@ -2,21 +2,35 @@
 
 class Journey { imsNo = ''; afUser = ''; shortD = ''; longD = ''; reqNo = ''; ritmNo = ''; ritmEnd = '' };
 //==================================================
-function recursiveAnchor_Wrap(originalFx, element) {
-  let debounceTime = 100;
-  function returnElement(element) {
-    return element;
+function recursiveCheck_Wrapper(originalFn, initTime) {
+  const promiseCache = [];
+
+  async function waitElemsAndExecute(...args) {
+    [...args].forEach((elem) => {
+
+      promiseCache.push(new Promise((resolve) => {
+
+        let debounceTime = initTime;
+        const recursiveCheck = () => {
+          if (!elem) {
+            debounceTime += 10;
+            setTimeout(() => { recursiveCheck() }, debounceTime);
+          } else {
+            resolve(elem);
+          }
+        };
+        recursiveCheck();
+
+      }));
+    });
+    console.log(promiseCache);
+    return Promise.all(promiseCache)
+      .then((elements) => {
+        return originalFn(...elements);
+      })
   };
 
-  function checkInner() {
-    if (!returnElement(element)) {
-      debounceTime += 10;
-      setTimeout(checkInner, debounceTime);
-      return;
-    };
-    originalFx(returnElement(element));
-  };
-  return checkInner;
+  return waitElemsAndExecute;
 };
 //==================================================
 //==================================================
@@ -28,8 +42,8 @@ function addAgentFieldAutocompleter(element) {
     };
   })
 };
-addAgentFieldAutocompleter = recursiveAnchor_Wrap(addAgentFieldAutocompleter, document.querySelector("#sys_display\\.interaction\\.assigned_to"));
-addAgentFieldAutocompleter();
+addAgentFieldAutocompleter = recursiveCheck_Wrapper(addAgentFieldAutocompleter);
+addAgentFieldAutocompleter( document.querySelector("#sys_display\\.interaction\\.assigned_to") );
 
 
 function addRequestButtonEffect(element) {
@@ -55,8 +69,8 @@ function addRequestButtonEffect(element) {
     };
   });
 }
-addRequestButtonEffect = recursiveAnchor_Wrap(addRequestButtonEffect, document.querySelector("#interaction_into_request"));
-addRequestButtonEffect();
+addRequestButtonEffect = recursiveCheck_Wrapper(addRequestButtonEffect);
+addRequestButtonEffect( document.querySelector("#interaction_into_request") );
 
 
 function anchorIncidentButton(element) {
@@ -71,5 +85,5 @@ function anchorIncidentButton(element) {
     });
   
 };
-anchorIncidentButton = recursiveAnchor_Wrap(anchorIncidentButton, document.querySelector("#ws_create_incident"));
-anchorIncidentButton();
+anchorIncidentButton = recursiveCheck_Wrapper(anchorIncidentButton);
+anchorIncidentButton( document.querySelector("#ws_create_incident") );

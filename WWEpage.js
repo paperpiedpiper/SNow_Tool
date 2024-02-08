@@ -1,22 +1,36 @@
 "use strict";
 
 //==================================================
-function recursiveAnchor_Wrap(originalFx, element) {
-    let debounceTime = 100;
-    function returnElement(element) {
-      return element;
-    };
-    
-    function checkInner() {
-      if (!returnElement(element)) {
-        debounceTime += 10;
-        setTimeout(checkInner, debounceTime);
-        return;
-      };
-      originalFx(returnElement(element));
-    };
-    return checkInner;
+function recursiveCheck_Wrapper(originalFn, initTime) {
+  const promiseCache = [];
+
+  async function waitElemsAndExecute(...args) {
+    [...args].forEach((elem) => {
+
+      promiseCache.push(new Promise((resolve) => {
+
+        let debounceTime = initTime;
+        const recursiveCheck = () => {
+          if (!elem) {
+            debounceTime += 10;
+            setTimeout(() => { recursiveCheck() }, debounceTime);
+          } else {
+            resolve(elem);
+          }
+        };
+        recursiveCheck();
+
+      }));
+    });
+    console.log(promiseCache);
+    return Promise.all(promiseCache)
+      .then((elements) => {
+        return originalFn(...elements);
+      })
   };
+
+  return waitElemsAndExecute;
+};
 //==================================================
 //==================================================
 function readAgentState() {
@@ -36,8 +50,5 @@ function scheduleReadState() {
     }, 60000);
 };
 
-function findTableAndRun() {
-    scheduleReadState();
-};
-findTableAndRun = recursiveAnchor_Wrap(findTableAndRun, document.querySelector("#wwe-workspace-item-0"));
-findTableAndRun();
+findTableAndRun = recursiveCheck_Wrapper(scheduleReadState);
+findTableAndRun( document.querySelector("#wwe-workspace-item-0") );

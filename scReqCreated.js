@@ -1,20 +1,34 @@
 "use strict";
 //==================================================
-function recursiveAnchor_Wrap(originalFx, element) {
-  let debounceTime = 100;
-  function returnElement(element) {
-    return element;
+function recursiveCheck_Wrapper(originalFn, initTime) {
+  const promiseCache = [];
+
+  async function waitElemsAndExecute(...args) {
+    [...args].forEach((elem) => {
+
+      promiseCache.push(new Promise((resolve) => {
+
+        let debounceTime = initTime;
+        const recursiveCheck = () => {
+          if (!elem) {
+            debounceTime += 10;
+            setTimeout(() => { recursiveCheck() }, debounceTime);
+          } else {
+            resolve(elem);
+          }
+        };
+        recursiveCheck();
+
+      }));
+    });
+    console.log(promiseCache);
+    return Promise.all(promiseCache)
+      .then((elements) => {
+        return originalFn(...elements);
+      })
   };
-  
-  function checkInner() {
-    if (!returnElement(element)) {
-      debounceTime += 10;
-      setTimeout(checkInner, debounceTime);
-      return;
-    };
-    originalFx(returnElement(element));
-  };
-  return checkInner;
+
+  return waitElemsAndExecute;
 };
 //==================================================
 //==================================================
@@ -30,9 +44,9 @@ function lookForJourney(imsNumberMessage) {
             localStorage.removeItem(imsNumberMessage?.innerHTML);
             reqNumberLink?.click();
         };
-        processRequestLink = recursiveAnchor_Wrap(processRequestLink, document.querySelector("#requesturl"));
-        processRequestLink();
+        processRequestLink = recursiveCheck_Wrapper(processRequestLink);
+        processRequestLink( document.querySelector("#requesturl") );
     };
 };
-lookForJourney = recursiveAnchor_Wrap(lookForJourney, document.querySelector("#output_messages > div > div > div > a"));
-lookForJourney();
+lookForJourney = recursiveCheck_Wrapper(lookForJourney);
+lookForJourney( document.querySelector("#output_messages > div > div > div > a") );

@@ -1,37 +1,34 @@
 "use strict";
 //==================================================
-function recursiveAnchor_Wrap(originalFx, element) {
-  let debounceTime = 100;
-  function returnElement(element) {
-    return element;
+function recursiveCheck_Wrapper(originalFn, initTime) {
+  const promiseCache = [];
+
+  async function waitElemsAndExecute(...args) {
+    [...args].forEach((elem) => {
+
+      promiseCache.push(new Promise((resolve) => {
+
+        let debounceTime = initTime;
+        const recursiveCheck = () => {
+          if (!elem) {
+            debounceTime += 10;
+            setTimeout(() => { recursiveCheck() }, debounceTime);
+          } else {
+            resolve(elem);
+          }
+        };
+        recursiveCheck();
+
+      }));
+    });
+    console.log(promiseCache);
+    return Promise.all(promiseCache)
+      .then((elements) => {
+        return originalFn(...elements);
+      })
   };
-  
-  function checkInner() {
-    if (!returnElement(element)) {
-      debounceTime += 10;
-      setTimeout(checkInner, debounceTime);
-      return;
-    };
-    originalFx(returnElement(element));
-  };
-  return checkInner;
-};
-//==================================================
-function recursiveAnchor_Wrap2(originalFx, originalArg, element) {
-  let debounceTime = 10;
-  function returnElement(element) {
-    return element;
-  };
-  
-  function checkInner() {
-    if (!returnElement(element)) {
-      debounceTime += 10;
-      setTimeout(checkInner, debounceTime);
-      return;
-    };
-    originalFx(originalArg);
-  };
-  return checkInner;
+
+  return waitElemsAndExecute;
 };
 //==================================================
 function lookForJourney(ritmNumberField) {
@@ -57,14 +54,14 @@ function lookForJourney(ritmNumberField) {
             saveBtn.click();
         };
     };
-    processShortDField = recursiveAnchor_Wrap(processShortDField, document.querySelector("#sc_req_item\\.short_description"));
-    processShortDField();
+    processShortDField = recursiveCheck_Wrapper(processShortDField, 100);
+    processShortDField( document.querySelector("#sc_req_item\\.short_description") );
   };
 
 
 };
-lookForJourney = recursiveAnchor_Wrap(lookForJourney, document.querySelector("#sys_readonly\\.sc_req_item\\.number"));
-lookForJourney();
+lookForJourney = recursiveCheck_Wrapper(lookForJourney, 100);
+lookForJourney( document.querySelector("#sys_readonly\\.sc_req_item\\.number") );
 
 
 function setPendingButtonOption(journeyJSON) {
@@ -108,13 +105,7 @@ function setPendingButtonOption(journeyJSON) {
   if (FieldMap.get('state')?.textContent == 'Open' && FieldMap.get('assigned_to')?.innerText == '(empty)' && FieldMap.get('assignment_group')?.innerText == 'GDM - L1 Global Service Desk (STT)') {
     document.querySelector("#setPendingBtn").remove();
     
-    function getCellEdit() {return document.querySelector("#cell_edit_value")};
-    function getCellOk() {return document.querySelector("#cell_edit_ok")}
-
-    function getNameCellEdit() {
-      return document.querySelector("#sys_display\\.LIST_EDIT_sc_task\\.assigned_to")
-    };
-/////////////////
+// ////////////////////////////////////////////////////////////////////////
 
     function doubleClickEl (trgt) {
       trgt.dispatchEvent(new MouseEvent('dblclick', {
@@ -124,45 +115,51 @@ function setPendingButtonOption(journeyJSON) {
       }));
     };
 
-    let setValue = (val) => {
-      getCellEdit().value = val;
+    let setFieldValue = (val) => {
+      document.querySelector("#cell_edit_value").value = val;
     };
 
-    let setNameValue = (val) => {
-      getNameCellEdit().value = val;
+    let setNameFieldValue = (val) => {
+      document.querySelector("#sys_display\\.LIST_EDIT_sc_task\\.assigned_to").value = val;
     };
 /////////////////
-// Very very hacky, but had to finish it
-    setTimeout(() => {
-      const doubleClickState = recursiveAnchor_Wrap(doubleClickEl, FieldMap.get('state'));
-      doubleClickState();
-      setTimeout(() => {
-        const setStateValue = recursiveAnchor_Wrap2(setValue, '-5', getCellEdit());
-        setStateValue();
-        setTimeout(() => {
-          getCellOk()?.click();
-          setTimeout(() => {
-            const doubleClickShortD = recursiveAnchor_Wrap(doubleClickEl, FieldMap.get('short_description'));
-            doubleClickShortD();
-            setTimeout(() => {
-              const setShortDValue = recursiveAnchor_Wrap2(setValue, `${document.querySelector("#sc_req_item\\.short_description").value} # tracking task`, getCellEdit());
-              setShortDValue();
-              setTimeout(() => {
-                getCellOk()?.click();
-                setTimeout(() => {
-                  const doubleClickAssignedTo = recursiveAnchor_Wrap(doubleClickEl, FieldMap.get('assigned_to'));
-                  doubleClickAssignedTo();
-                  setTimeout(() => {
-                    const setAssignedTo = recursiveAnchor_Wrap2(setNameValue, localStorage.getItem('SNow_Agent_Name'), getNameCellEdit());
-                    setAssignedTo();
-                  }, 500)
-                }, 500)
-              }, 500)
-            }, 500)
-          }, 500);
-        }, 500);
-      }, 500);
-    }, 0);
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const executeAsyncClicks = async () => {
+  try {
+    const doubleClickState = recursiveCheck_Wrapper(doubleClickEl, 100);
+    await doubleClickState( FieldMap.get('state'));
+    await delay(500);
+
+    const setStateValue =  recursiveCheck_Wrapper(() => { setFieldValue('-5') }, 10);
+    await setStateValue( document.querySelector("#cell_edit_value") );
+    await delay(500);
+
+    await document.querySelector("#cell_edit_ok")?.click();
+    await delay(500);
+
+    const doubleClickShortD = recursiveCheck_Wrapper(doubleClickEl, 100);
+    await doubleClickShortD( FieldMap.get('short_description') );
+    await delay(500);
+
+    const setShortDValue =  recursiveCheck_Wrapper(() => { setFieldValue(`${document.querySelector("#sc_req_item\\.short_description").value} # tracking task`) }, 10);
+    await setShortDValue( document.querySelector("#cell_edit_value") );
+    await delay(500);
+
+    await document.querySelector("#cell_edit_ok")?.click();
+    await delay(500);
+
+    const doubleClickAssignedTo =  recursiveCheck_Wrapper(doubleClickEl, 100);
+    await doubleClickAssignedTo( FieldMap.get('assigned_to') );
+    await delay(500);
+
+    const setAssignedTo =  recursiveCheck_Wrapper(() => { setNameFieldValue(localStorage.getItem('SNow_Agent_Name')) }, 10);
+    await setAssignedTo( document.querySelector("#sys_display\\.LIST_EDIT_sc_task\\.assigned_to") );
+
+    // TODO: implement "Click Me" message for user
+
+  } catch (e) { console.error(e) }
+};
+executeAsyncClicks();
 
     } else {
       console.log(document.querySelector("#setPendingBtn").textContent = "Not a new ticket!");
@@ -173,6 +170,6 @@ function setPendingButtonOption(journeyJSON) {
     };
   });
 };
-setPendingButtonOption = recursiveAnchor_Wrap(setPendingButtonOption, sessionStorage.getItem(document.querySelector("#sys_readonly\\.sc_req_item\\.number")?.value));
+setPendingButtonOption = recursiveCheck_Wrapper(setPendingButtonOption);
 if (document.querySelector("#sc_req_item\\.sc_task\\.request_item_table > tbody").childElementCount == 1)
-  setPendingButtonOption();
+  setPendingButtonOption( sessionStorage.getItem(document.querySelector("#sys_readonly\\.sc_req_item\\.number")?.value) );
